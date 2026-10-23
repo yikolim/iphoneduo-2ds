@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#efc3c3">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<title>iPhone Duo 2DS</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rubik:wght@500;700&display=swap">
+<style>
+/* Layout: one handheld scaled to fit the viewport. Portrait = stacked screens with controls under the touch screen; wide = the real DS Lite layout. Every size is a multiple of --u. */
+:root {
+  --u: 3.6px;
+  --room: #e9e2e0;
+  --room-2: #d8cfcd;
+  --shell: #efc3c3;
+  --shell-hi: #f8dcdb;
+  --shell-lo: #d29d9f;
+  --shell-edge: #b98587;
+  --glass: #1d1719;
+  --ink: #8f5f62;
+  --led: #6bff7a;
+  --btn: #f3cfcf;
+  --font-label: "Rubik", system-ui, sans-serif;
+  --font-pixel: "Press Start 2P", ui-monospace, monospace;
+  color-scheme: light;
+}
+html, body { height: 100%; }
+body {
+  background: radial-gradient(120% 80% at 50% 30%, var(--room) 0%, var(--room-2) 100%);
+  overflow: hidden;
+  -webkit-user-select: none; user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.stage {
+  box-sizing: border-box;
+  height: 100%;
+  display: grid; place-items: center;
+  padding-block: 12px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* ---------- device ---------- */
+.ds { width: calc(var(--u) * 100); display: flex; flex-direction: column; align-items: center; touch-action: none; filter: drop-shadow(0 calc(var(--u)*3) calc(var(--u)*4) rgba(90,50,55,.28)); }
+.ds.wide { width: calc(var(--u) * 150); }
+
+.shell {
+  width: 100%; box-sizing: border-box; position: relative;
+  background: linear-gradient(170deg, var(--shell-hi) 0%, var(--shell) 35%, var(--shell) 75%, var(--shell-lo) 100%);
+  box-shadow: inset 0 calc(var(--u)*.4) 0 rgba(255,255,255,.55), inset 0 calc(var(--u)*-.6) 0 var(--shell-edge);
+}
+.top { border-radius: calc(var(--u)*5) calc(var(--u)*5) calc(var(--u)*2) calc(var(--u)*2); padding: calc(var(--u)*5) 0 calc(var(--u)*5); display: flex; justify-content: center; align-items: center; }
+.top-in { display: flex; align-items: center; gap: calc(var(--u)*3); }
+.shoulders { display: none; }
+.bottom { border-radius: calc(var(--u)*2) calc(var(--u)*2) calc(var(--u)*6) calc(var(--u)*6); padding: calc(var(--u)*3) calc(var(--u)*5) calc(var(--u)*6); }
+
+/* the recessed panel around each screen */
+.bezel {
+  background: linear-gradient(180deg, #e7b5b5, #f1caca);
+  border-radius: calc(var(--u)*2);
+  padding: calc(var(--u)*2.2);
+  box-shadow: inset 0 calc(var(--u)*.5) calc(var(--u)*.8) rgba(120,70,75,.35), 0 calc(var(--u)*.3) 0 rgba(255,255,255,.6);
+}
+.glass { background: var(--glass); padding: calc(var(--u)*1.1); border-radius: calc(var(--u)*.6); }
+canvas { display: block; width: calc(var(--u)*76); height: calc(var(--u)*57); image-rendering: pixelated; image-rendering: crisp-edges; background: #000; }
+.ds:not(.wide) canvas { width: calc(var(--u)*80); height: calc(var(--u)*60); }
+.ds:not(.wide) .top .bezel { padding: calc(var(--u)*1.4); }
+.ds:not(.wide) .speaker { display: none; }
+/* 3DS-style wide top screen (400x240, 5:3) filling most of the upper shell */
+.ds:not(.wide) canvas#top { width: calc(var(--u)*92); height: calc(var(--u)*55.2); }
+.ds.wide canvas#top { width: calc(var(--u)*118); height: calc(var(--u)*70.8); }
+.ds.wide .top .speaker { grid-template-columns: repeat(1, calc(var(--u)*1.3)); padding: calc(var(--u)*1); }
+
+.speaker { display: grid; grid-template-columns: repeat(2, calc(var(--u)*1.3)); gap: calc(var(--u)*1.3); padding: calc(var(--u)*2); }
+.speaker i { width: calc(var(--u)*1.3); height: calc(var(--u)*1.3); border-radius: 50%; background: #5a3a3d; box-shadow: 0 calc(var(--u)*.2) 0 rgba(255,255,255,.6); }
+
+/* hinge */
+.hinge { width: 100%; display: flex; height: calc(var(--u)*7); position: relative; z-index: 2; margin-block: calc(var(--u)*-1); }
+.knuckle {
+  flex: 0 0 calc(var(--u)*16); position: relative;
+  background: linear-gradient(180deg, var(--shell-lo), var(--shell-hi) 40%, var(--shell) 60%, var(--shell-lo));
+  border-radius: calc(var(--u)*3.5);
+  display: grid; place-items: center;
+  font: 700 calc(var(--u)*2.6) var(--font-label); color: var(--ink);
+}
+.knuckle.pressed { filter: brightness(.9); transform: translateY(calc(var(--u)*.3)); }
+.barrel { flex: 1; margin-inline: calc(var(--u)*.6); border-radius: calc(var(--u)*3); background: linear-gradient(180deg, #c99193, #f3cfce 45%, #e6b2b3 70%, #b98587); }
+.led { position: absolute; right: calc(var(--u)*2.6); top: 50%; width: calc(var(--u)*1); height: calc(var(--u)*2.8); transform: translateY(-50%); border-radius: calc(var(--u)*.5); background: var(--led); box-shadow: 0 0 calc(var(--u)*1.6) var(--led); }
+
+/* bottom half layout */
+.mic { text-align: center; font: 500 calc(var(--u)*1.6) var(--font-label); letter-spacing: .12em; color: var(--ink); height: calc(var(--u)*3); line-height: calc(var(--u)*3); }
+.mic::before { content: ""; display: inline-block; width: calc(var(--u)*.5); height: calc(var(--u)*1.6); background: #4a2f32; border-radius: 2px; margin-right: calc(var(--u)*.8); vertical-align: -10%; }
+.deck { display: grid; align-items: center; justify-items: center; }
+.ds:not(.wide) .deck { grid-template-columns: 1fr 1fr; grid-template-areas: "screen screen" "dpad face" "dpad sys"; row-gap: calc(var(--u)*2); }
+.ds:not(.wide) .deck .bezel { margin-bottom: calc(var(--u)*4); }
+.ds.wide .deck { grid-template-columns: 1fr auto 1fr; grid-template-areas: "dpad screen face" ". screen sys"; column-gap: calc(var(--u)*4); }
+.deck .bezel { grid-area: screen; }
+.dpad-wrap { grid-area: dpad; }
+.face { grid-area: face; }
+/* DS Lite: START above SELECT, small round keys under the face buttons, labels printed to their left */
+.sys { grid-area: sys; display: flex; flex-direction: column; align-items: flex-end; gap: calc(var(--u)*1.6); justify-self: center; align-self: start; padding-left: calc(var(--u)*6); }
+
+/* d-pad: one matte cross sitting in a cross-shaped well cut into the shell */
+.dpad-wrap { position: relative; width: calc(var(--u)*26); height: calc(var(--u)*26); }
+.dpad-wrap::before, .dpad-wrap::after {
+  content: ""; position: absolute; background: #b07c7f; border-radius: calc(var(--u)*1.4);
+  box-shadow: inset 0 calc(var(--u)*.5) calc(var(--u)*.6) rgba(70,30,35,.45), 0 calc(var(--u)*.3) 0 rgba(255,255,255,.55);
+}
+.dpad-wrap::before { left: 32%; right: 32%; top: -1.5%; bottom: -1.5%; }
+.dpad-wrap::after { top: 32%; bottom: 32%; left: -1.5%; right: -1.5%; }
+.dpad { position: absolute; inset: 0; z-index: 1; transition: transform .05s; }
+.dpad::before, .dpad::after {
+  content: ""; position: absolute;
+  background: linear-gradient(180deg, #f6d4d4, var(--btn) 45%, #e4b4b5);
+  border-radius: calc(var(--u)*1);
+  box-shadow: inset 0 calc(var(--u)*.3) 0 rgba(255,255,255,.7), inset 0 calc(var(--u)*-.4) 0 rgba(150,90,95,.35), 0 calc(var(--u)*.5) calc(var(--u)*.6) rgba(90,40,45,.35);
+}
+.dpad::before { left: 34%; right: 34%; top: 1%; bottom: 1%; }
+.dpad::after { top: 34%; bottom: 34%; left: 1%; right: 1%; }
+/* embossed arrows: a highlight and a shadow copy of each triangle */
+.dpad .arrow { position: absolute; z-index: 1; width: 0; height: 0; border: calc(var(--u)*1.1) solid transparent; filter: drop-shadow(0 calc(var(--u)*.25) 0 rgba(255,255,255,.75)); }
+.dpad .arrow.up { left: 50%; top: 8%; transform: translateX(-50%); border-bottom-color: #c99597; border-top: 0; }
+.dpad .arrow.down { left: 50%; bottom: 8%; transform: translateX(-50%); border-top-color: #c99597; border-bottom: 0; }
+.dpad .arrow.left { top: 50%; left: 8%; transform: translateY(-50%); border-right-color: #c99597; border-left: 0; }
+.dpad .arrow.right { top: 50%; right: 8%; transform: translateY(-50%); border-left-color: #c99597; border-right: 0; }
+/* shallow round dimple in the middle */
+.dpad .dot { position: absolute; z-index: 1; left: 50%; top: 50%; width: calc(var(--u)*5); height: calc(var(--u)*5); transform: translate(-50%,-50%); border-radius: 50%; background: radial-gradient(circle at 50% 70%, #f7dbdb, #e6b6b7 70%); box-shadow: inset 0 calc(var(--u)*.4) calc(var(--u)*.5) rgba(120,70,75,.3), 0 calc(var(--u)*.2) 0 rgba(255,255,255,.6); }
+.dpad[data-tilt="up"] { transform: perspective(220px) rotateX(7deg); }
+.dpad[data-tilt="down"] { transform: perspective(220px) rotateX(-7deg); }
+.dpad[data-tilt="left"] { transform: perspective(220px) rotateY(-7deg); }
+.dpad[data-tilt="right"] { transform: perspective(220px) rotateY(7deg); }
+.dpad[data-tilt*="-"] { transform: perspective(220px) scale(.98); }
+
+/* face buttons: tight diamond of domed keys, each sitting in a hole with a dark gap ring */
+.face { width: calc(var(--u)*26); height: calc(var(--u)*26); position: relative; }
+.btn {
+  position: absolute; width: calc(var(--u)*8.6); height: calc(var(--u)*8.6); border-radius: 50%;
+  background: radial-gradient(circle at 40% 30%, #fff1f1 0%, #f6d6d6 30%, var(--btn) 60%, #dcaaab 100%);
+  box-shadow:
+    0 0 0 calc(var(--u)*.45) #9c6a6d,                       /* gap between key and shell */
+    0 0 0 calc(var(--u)*.85) rgba(255,255,255,.5),            /* shell lip catching light */
+    0 calc(var(--u)*.7) calc(var(--u)*.6) calc(var(--u)*.3) rgba(80,35,40,.35),
+    inset 0 calc(var(--u)*-.5) calc(var(--u)*.6) rgba(150,90,95,.35);
+  display: grid; place-items: center;
+  /* letters are moulded into the key: same pink, shown by light and shadow */
+  font: 700 calc(var(--u)*3.2) var(--font-label); color: #c48d90;
+  text-shadow: 0 calc(var(--u)*.25) 0 rgba(255,255,255,.85), 0 calc(var(--u)*-.15) 0 rgba(120,70,75,.45);
+  transition: box-shadow .05s, background .05s;
+}
+.btn[data-btn="X"] { left: 50%; top: 0; transform: translateX(-50%); }
+.btn[data-btn="B"] { left: 50%; bottom: 0; transform: translateX(-50%); }
+.btn[data-btn="Y"] { left: 0; top: 50%; transform: translateY(-50%); }
+.btn[data-btn="A"] { right: 0; top: 50%; transform: translateY(-50%); }
+.btn.pressed {
+  background: radial-gradient(circle at 40% 35%, #f6dcdc 0%, var(--btn) 45%, #d39fa1 100%);
+  box-shadow: 0 0 0 calc(var(--u)*.45) #8a5a5d, 0 0 0 calc(var(--u)*.85) rgba(255,255,255,.45), 0 calc(var(--u)*.2) calc(var(--u)*.3) rgba(80,35,40,.3), inset 0 calc(var(--u)*.4) calc(var(--u)*.6) rgba(120,70,75,.35);
+}
+
+.small { display: flex; flex-direction: row; align-items: center; gap: calc(var(--u)*1.6); font: 500 calc(var(--u)*1.6) var(--font-label); letter-spacing: .14em; color: #a97a7d; text-shadow: 0 calc(var(--u)*.15) 0 rgba(255,255,255,.6); }
+.pill {
+  width: calc(var(--u)*4); height: calc(var(--u)*4); border-radius: 50%;
+  background: radial-gradient(circle at 40% 30%, #fff1f1, var(--btn) 55%, #d8a5a7);
+  box-shadow: 0 0 0 calc(var(--u)*.35) #9c6a6d, 0 0 0 calc(var(--u)*.7) rgba(255,255,255,.5), 0 calc(var(--u)*.4) calc(var(--u)*.4) rgba(80,35,40,.3);
+  transition: box-shadow .05s;
+}
+.small.pressed .pill { box-shadow: 0 0 0 calc(var(--u)*.35) #8a5a5d, 0 0 0 calc(var(--u)*.7) rgba(255,255,255,.45), inset 0 calc(var(--u)*.3) calc(var(--u)*.4) rgba(120,70,75,.4); }
+
+.hint { position: fixed; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom, 0px) + 6px); text-align: center; font: 500 11px var(--font-label); color: #9b8587; letter-spacing: .04em; pointer-events: none; }
+@media (max-width: 700px), (pointer: coarse) { .hint { display: none; } }
+
+/* ---------- foldable full-screen mode (iPhone Duo inner screen, iPad) ----------
+   The device fills the viewport and each half of the DS takes exactly one half of the screen,
+   so the hinge sits on the physical fold. Held tall: fold runs across (true DS clamshell).
+   Held wide (book-style): left half is the top screen, right half is the touch screen + controls. */
+.ds.duo { position: fixed; inset: 0; width: auto; height: auto; flex-direction: column; align-items: stretch; filter: none; background: var(--shell); z-index: 5; }
+.ds.duo.duo-row { flex-direction: row; }
+.ds.duo .shell { flex: 1 1 0; min-width: 0; min-height: 0; border-radius: 0; display: flex; align-items: center; justify-content: center; box-shadow: none; }
+.ds.duo:not(.duo-row) .top { padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) 0 env(safe-area-inset-left, 0px); background: linear-gradient(180deg, var(--shell-hi), var(--shell) 40%, var(--shell) 85%, var(--shell-lo)); }
+.ds.duo:not(.duo-row) .bottom { padding: 0 env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); background: linear-gradient(180deg, var(--shell-lo), var(--shell) 15%, var(--shell) 70%, var(--shell-lo)); }
+.ds.duo.duo-row .top { padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); background: linear-gradient(90deg, var(--shell-hi), var(--shell) 40%, var(--shell) 85%, var(--shell-lo)); }
+.ds.duo.duo-row .bottom { padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) 0; background: linear-gradient(90deg, var(--shell-lo), var(--shell) 15%, var(--shell) 70%, var(--shell-lo)); }
+.ds.duo .hinge { position: absolute; left: 0; right: 0; top: var(--fold, 50%); transform: translateY(-50%); margin: 0; }
+.ds.duo.duo-row .hinge { top: 0; bottom: 0; right: auto; left: var(--fold, 50%); width: calc(var(--u)*6); height: auto; transform: translateX(-50%); flex-direction: column; }
+.ds.duo.duo-row .hinge .knuckle { display: none; }
+.ds.duo.duo-row .barrel { margin: 0; border-radius: 0; background: linear-gradient(90deg, #c99193, #f3cfce 45%, #e6b2b3 70%, #b98587); }
+.ds.duo.duo-row .led { right: auto; left: 50%; top: calc(env(safe-area-inset-top, 0px) + var(--u)*4); width: calc(var(--u)*2.8); height: calc(var(--u)*1); transform: translateX(-50%); }
+.ds.duo.duo-row .shoulders { display: flex; justify-content: space-between; position: absolute; left: calc(var(--u)*5); right: calc(env(safe-area-inset-right, 0px) + var(--u)*2); top: env(safe-area-inset-top, 0px); }
+.knuckle.tab { width: calc(var(--u)*18); height: calc(var(--u)*6); border-radius: 0 0 calc(var(--u)*3) calc(var(--u)*3); background: linear-gradient(180deg, var(--shell-lo), var(--shell-hi) 50%, var(--shell)); box-shadow: 0 calc(var(--u)*.4) calc(var(--u)*.8) rgba(100,50,55,.25); }
+.ds.duo ~ .hint { display: none; }
+/* Clamshell in the Duo frame: each half scales on its own, so the top screen fills its half and
+   the touch screen (4:3) is as big as the row with the controls tucked in close allows. */
+.ds.duo:not(.duo-row) canvas#bottom { width: calc(var(--u)*85.33); height: calc(var(--u)*64); }
+.ds.duo:not(.duo-row) .deck { column-gap: calc(var(--u)*2.5); }
+.ds.duo:not(.duo-row) .bottom { padding-left: calc(var(--u)*3); padding-right: calc(var(--u)*3); }
+.ds.duo:not(.duo-row) .sys { padding-left: calc(var(--u)*2); }
+.ds.duo:not(.duo-row) .top .bezel { padding: calc(var(--u)*1.2); }
+.ds.duo:not(.duo-row) .top .glass { padding: calc(var(--u)*.7); }
+/* Duo depth, after the pink TinyMac-style foldables: the phone's dark body shows as a thin rim, and
+   each half is a raised pink panel with rounded corners, lit from above. The lid casts a shadow onto
+   the deck below the fold, the top screen sits in a thick black frame, and the controls stand up
+   off the deck like keycaps. */
+.ds.duo:not(.duo-row) { background: linear-gradient(180deg, #2b2428, #1b1619); }
+.ds.duo:not(.duo-row) .shell { position: relative; isolation: isolate; }
+.ds.duo:not(.duo-row) .top {
+  margin: calc(var(--u)*1.6) calc(var(--u)*1.6) calc(var(--u)*1.2); border-radius: calc(var(--u)*7) calc(var(--u)*7) calc(var(--u)*4) calc(var(--u)*4); z-index: 2;
+  background: linear-gradient(180deg, #fbe2e1 0%, var(--shell) 30%, #eab8ba 85%, #dda5a9 100%);
+  box-shadow: inset 0 calc(var(--u)*.7) 0 rgba(255,255,255,.75), inset 0 calc(var(--u)*-1) 0 #c98f94, inset calc(var(--u)*.6) 0 0 rgba(255,255,255,.35), inset calc(var(--u)*-.6) 0 0 rgba(170,100,108,.35),
+    0 calc(var(--u)*2.2) calc(var(--u)*2.6) rgba(10,4,8,.6), 0 calc(var(--u)*.6) calc(var(--u)*.6) rgba(10,4,8,.45); }
+.ds.duo:not(.duo-row) .bottom {
+  margin: calc(var(--u)*1.2) calc(var(--u)*1.6) calc(var(--u)*1.6); border-radius: calc(var(--u)*4) calc(var(--u)*4) calc(var(--u)*7) calc(var(--u)*7);
+  background: linear-gradient(180deg, #cf979c 0%, #e7b3b6 9%, var(--shell) 22%, var(--shell) 80%, #f6d3d3 100%);
+  box-shadow: inset 0 calc(var(--u)*3.5) calc(var(--u)*3.5) rgba(95,38,48,.38), inset 0 calc(var(--u)*-.7) 0 rgba(255,255,255,.55), inset calc(var(--u)*.6) 0 0 rgba(255,255,255,.3), inset calc(var(--u)*-.6) 0 0 rgba(170,100,108,.3),
+    0 calc(var(--u)*1.2) calc(var(--u)*1.6) rgba(10,4,8,.5); }
+/* the fold: a dark groove between the two panels */
+.ds.duo:not(.duo-row) .barrel { background: linear-gradient(180deg, #120e10, #3a3035 45%, #1a1416); box-shadow: inset 0 calc(var(--u)*.3) calc(var(--u)*.4) rgba(0,0,0,.6); }
+.ds.duo:not(.duo-row) .knuckle { box-shadow: 0 calc(var(--u)*.8) calc(var(--u)*1) rgba(10,4,8,.45), inset 0 calc(var(--u)*.4) 0 rgba(255,255,255,.6); }
+/* screens: a pink recess, then a thick rounded black frame */
+.ds.duo:not(.duo-row) .bezel { background: linear-gradient(180deg, #e0a9ad, #f1c8c9); box-shadow: inset 0 calc(var(--u)*1) calc(var(--u)*1.4) rgba(100,40,50,.5), 0 calc(var(--u)*.45) 0 rgba(255,255,255,.7), 0 calc(var(--u)*-.35) calc(var(--u)*.5) rgba(120,55,62,.3); }
+.ds.duo:not(.duo-row) .glass { background: #121013; border-radius: calc(var(--u)*2); padding: calc(var(--u)*1.6); box-shadow: inset 0 calc(var(--u)*.7) calc(var(--u)*1.2) rgba(0,0,0,.85), inset 0 calc(var(--u)*-.3) 0 rgba(255,255,255,.12); }
+.ds.duo:not(.duo-row) canvas { border-radius: calc(var(--u)*.6); }
+.ds.duo:not(.duo-row) .dpad-wrap, .ds.duo:not(.duo-row) .face { filter: drop-shadow(0 calc(var(--u)*1.2) calc(var(--u)*1)  rgba(90,32,42,.45)); }
+/* ---------- closed lid: what the folded phone's small outer screen shows ----------
+   The back of a pink 3DS XL lid: plain glossy pink, a white hinge bar across the top with a small
+   light at its end. Unfolding the phone (or tapping) opens it. */
+.lid { position: fixed; inset: 0; z-index: 60; display: none; background: linear-gradient(180deg, #2b2428, #1b1619); perspective: 900px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.lid.show { display: block; }
+.lid-face { position: absolute; inset: max(10px, env(safe-area-inset-top, 0px)) max(10px, env(safe-area-inset-right, 0px)) max(10px, env(safe-area-inset-bottom, 0px)) max(10px, env(safe-area-inset-left, 0px));
+  border-radius: 18px 18px 30px 30px; transform-origin: 50% 0%; transition: transform .5s cubic-bezier(.5,0,.7,.4), opacity .5s; overflow: hidden;
+  background:
+    linear-gradient(115deg, rgba(255,255,255,.55) 0%, rgba(255,255,255,.18) 22%, transparent 38%),
+    radial-gradient(140% 70% at 50% 110%, rgba(170,95,105,.28), transparent 60%),
+    linear-gradient(180deg, #f6d2d5 0%, #f1c3c8 40%, #ebb6bd 85%, #e3a9b1 100%);
+  box-shadow: inset 0 -4px 0 rgba(200,140,148,.8), inset 3px 0 0 rgba(255,255,255,.35), inset -3px 0 0 rgba(190,120,130,.35), 0 10px 22px rgba(0,0,0,.55); }
+.lid.opening .lid-face { transform: rotateX(88deg); opacity: 0; }
+.lid-hinge { position: absolute; left: 0; right: 0; top: 0; height: clamp(26px, 9vmin, 46px); border-radius: 18px 18px 6px 6px;
+  background: linear-gradient(180deg, #ffffff 0%, #f4f2f2 45%, #dcd8d9 100%); box-shadow: 0 2px 4px rgba(120,70,80,.35), inset 0 -2px 0 rgba(160,150,152,.6); }
+.lid-hinge::before, .lid-hinge::after { content: ""; position: absolute; top: 12%; bottom: 12%; width: 7%; border-radius: 40%; background: linear-gradient(180deg, #fafafa, #e2dfe0); box-shadow: inset 0 0 0 1px rgba(150,140,142,.35); }
+.lid-hinge::before { left: 2%; }
+.lid-hinge::after { right: 2%; }
+.lid-led { position: absolute; right: 4.5%; top: 50%; width: 5px; height: 9px; transform: translateY(-50%); border-radius: 3px; background: #5a4a4e; z-index: 1; }
+.lid.opening .lid-turn .lid-face { transform: rotateX(88deg); opacity: 0; }
+/* The lid is landscape like the real handheld, turned so the hinge runs along the bottom edge (as
+   it sits on the folded phone). On a portrait screen it is turned a quarter more to fill the screen. */
+.lid-turn { position: absolute; left: 50%; top: 50%; width: 100vw; height: 100vh; transform: translate(-50%, -50%) rotate(180deg); }
+@media (orientation: portrait) { .lid-turn { width: 100vh; height: 100vw; transform: translate(-50%, -50%) rotate(-90deg); } }
+@media (prefers-reduced-motion: reduce) { .lid-face { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .dpad, .btn, .pill { transition: none; } }
+</style>
+
+<div class="stage" id="stage">
+  <div class="ds" id="ds">
+    <div class="shell top" id="topShell">
+      <div class="top-in" id="topIn">
+        <div class="bezel"><div class="glass"><canvas id="top" width="400" height="240"></canvas></div></div>
+      </div>
+    </div>
+
+    <div class="hinge" id="hinge">
+      <div class="knuckle" data-btn="L">L</div>
+      <div class="barrel"></div>
+      <div class="knuckle" data-btn="R">R</div>
+      <span class="led" title="Power"></span>
+    </div>
+
+    <div class="shell bottom" id="botShell">
+      <!-- shoulder tabs used only when the fold runs vertically (book-style) -->
+      <div class="shoulders"><div class="knuckle tab" data-btn="L">L</div><div class="knuckle tab" data-btn="R">R</div></div>
+      <div class="bot-in" id="botIn">
+      <div class="mic">MIC</div>
+      <div class="deck">
+        <div class="bezel"><div class="glass"><canvas id="bottom" width="256" height="192"></canvas></div></div>
+        <div class="dpad-wrap">
+          <div class="dpad" id="dpad" data-btn="DPAD" role="group" aria-label="D-pad">
+            <span class="arrow up"></span><span class="arrow down"></span><span class="arrow left"></span><span class="arrow right"></span><span class="dot"></span>
+          </div>
+        </div>
+        <div class="face" role="group" aria-label="Face buttons">
+          <div class="btn" data-btn="X">X</div>
+          <div class="btn" data-btn="Y">Y</div>
+          <div class="btn" data-btn="A">A</div>
+          <div class="btn" data-btn="B">B</div>
+        </div>
+        <div class="sys">
+          <div class="small" data-btn="START">START<span class="pill"></span></div>
+          <div class="small" data-btn="SELECT">SELECT<span class="pill"></span></div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="lid" id="lid" role="button" aria-label="Open the handheld">
+  <div class="lid-turn"><div class="lid-face">
+    <div class="lid-hinge"><div class="lid-led"></div></div>
+  </div></div>
+</div>
+<div class="hint">Keyboard: arrows · X = A · Z = B · S = X · A = Y · Q/W = L/R · Enter = Start · Shift = Select</div>
+
+<script>
+/* =====================================================================
+   iPhone Duo 2DS input layer
+   window.DS is the hook a game plugs into (see README.md):
+     DS.isDown("A")              -> boolean, buttons: UP DOWN LEFT RIGHT A B X Y L R START SELECT
+     DS.on("down", fn(btn))      -> fires once per press
+     DS.on("up",   fn(btn))
+     DS.on("touch", fn({x,y,phase}))  -> bottom screen, x/y in 256x192 pixels, phase start|move|end
+     DS.top / DS.bottom          -> the canvases: top 400x240, bottom (touch) 256x192
+     DS.setGame({ init(), update(dt), draw(topCtx, bottomCtx) })  -> plug your game in
+     DS.haptic([on, off, on...]) -> vibration where the phone allows it
+     DS.lidClosed()              -> true while the closed lid is showing ("ds-lid" event on change)
+   ===================================================================== */
+(() => {
+  const BUTTONS = ["UP","DOWN","LEFT","RIGHT","A","B","X","Y","L","R","START","SELECT"];
+  const held = Object.fromEntries(BUTTONS.map(b => [b, false]));
+  const listeners = { down: [], up: [], touch: [] };
+  const emit = (t, v) => listeners[t].forEach(fn => { try { fn(v); } catch (e) { console.error(e); } });
+
+  const ds = document.getElementById("ds");
+  const stage = document.getElementById("stage");
+  const dpadEl = document.getElementById("dpad");
+  const topCv = document.getElementById("top"), botCv = document.getElementById("bottom");
+
+  /* ---------- scale to fit ---------- */
+  const halves = [["topShell", "topIn"], ["botShell", "botIn"]].map(([s, i]) => [document.getElementById(s), document.getElementById(i)]);
+  let ratios = {};
+  function measure(wide) {
+    ds.classList.toggle("wide", wide);
+    ds.style.setProperty("--u", "4px");
+    const r = ds.getBoundingClientRect();
+    return r.height / r.width;
+  }
+  // Foldable screens (iPhone Duo open ~1.42:1, closed ~1.45:1, iPads) are close to square;
+  // regular iPhones are ~2.2:1 and keep the scaled handheld.
+  // The iPhone Duo unfolded is about 1.42 : 1 (the frame uses 1.3). On a real foldable or tablet the handheld fills the
+  // screen; anywhere else it sits in an upright frame of that ratio.
+  const DUO_RATIO = 1.3;   // a touch wider than the Duo's 1.42, so the touch-screen row has room
+  function placeFrame(row, fill) {
+    const vw = innerWidth, vh = innerHeight;
+    let fw = vw, fh = vh;
+    if (!fill) {
+      if (row) { fw = Math.min(vw, vh * DUO_RATIO); fh = fw / DUO_RATIO; }
+      else { fh = Math.min(vh, vw * DUO_RATIO); fw = fh / DUO_RATIO; }
+    }
+    const framed = fw < vw - 1 || fh < vh - 1;
+    Object.assign(ds.style, { inset: "auto", left: (vw - fw) / 2 + "px", top: (vh - fh) / 2 + "px", width: fw + "px", height: fh + "px",
+      borderRadius: framed ? "18px" : "", overflow: framed ? "hidden" : "", boxShadow: framed ? "0 18px 50px rgba(90,40,50,.25)" : "" });
+  }
+  function clearFrame() { for (const k of ["inset", "left", "top", "width", "height", "borderRadius", "overflow", "boxShadow"]) ds.style[k] = ""; }
+  function fitDuo(row, fill) {
+    ds.classList.add("duo");
+    placeFrame(row, fill);
+    ds.classList.toggle("duo-row", row);
+    ds.classList.toggle("wide", !row);
+    // Use the real hinge position when the browser reports screen segments, else the middle.
+    const segs = window.viewport?.segments;
+    if (segs?.length === 2) ds.style.setProperty("--fold", (row ? segs[0].width : segs[0].height) + "px");
+    else ds.style.removeProperty("--fold");
+    let uMin = Infinity;
+    for (const [shell, inner] of halves) {
+      const isTop = shell.id === "topShell";
+      shell.style.setProperty("--u", "4px");
+      const r = inner.getBoundingClientRect();
+      const cs = getComputedStyle(shell);
+      const aw = shell.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      const ah = shell.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+      // keep clear of the hinge strip (and the shoulder tabs when they're shown)
+      // Held tall the top screen nearly fills its half; the touch screen keeps room for the controls.
+      const fw = row ? 0.86 : isTop ? 0.88 : 0.9, fh = row ? 0.84 : isTop ? 0.93 : 0.86;
+      const u = 4 * Math.min(aw * fw / r.width, ah * fh / r.height);
+      shell.style.setProperty("--u", u + "px");
+      uMin = Math.min(uMin, u);
+    }
+    ds.style.setProperty("--u", uMin + "px");
+  }
+  function fit() {
+    const vw = innerWidth, vh = innerHeight;
+    // Judge by the physical screen, not the page: Safari's bars shrink the page and would
+    // make a Duo held book-style look like a long phone. Screen ratio: Duo ~1.42, iPad ~1.4, iPhone ~2.2.
+    const params = new URLSearchParams(location.search);
+    const sw = screen.width || vw, sh = screen.height || vh;
+    const squarish = Math.max(sw, sh) / Math.min(sw, sh) < 1.75;
+    const foldable = matchMedia("(pointer: coarse)").matches && squarish;
+    // Default: the iPhone Duo layout. ?classic gives the plain DS Lite layout instead.
+    // Always the DS clamshell way up (top screen above the touch screen), never turned book-style.
+    if (!params.has("classic")) return fitDuo(false, foldable || params.has("duo"));
+    clearFrame();
+    ds.classList.remove("duo", "duo-row");
+    halves.forEach(([shell]) => shell.style.removeProperty("--u"));
+    const cs = getComputedStyle(stage);
+    const w = stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    const h = stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    ratios.p ??= measure(false);
+    ratios.w ??= measure(true);
+    // pick whichever layout gives the bigger device
+    const uP = Math.min(w / 100, h / (100 * ratios.p));
+    const uW = Math.min(w / 150, h / (150 * ratios.w));
+    const wide = uW * 150 > uP * 100 * 1.15;
+    ds.classList.toggle("wide", wide);
+    ds.style.setProperty("--u", (wide ? uW : uP) + "px");
+  }
+  // Closed lid on the folded phone's outer screen. It shows at start on a small touch screen (and
+  // with ?cover), opens on a tap or when the page grows a lot (unfolding), and closes again when
+  // the page shrinks a lot (folding back to the outer screen).
+  const lid = document.getElementById("lid");
+  const area = () => innerWidth * innerHeight;
+  let lastArea = area();
+  // The game hears about it as a "ds-lid" event ({open}); #lid.show means it is closed.
+  const lidEvent = open => dispatchEvent(new CustomEvent("ds-lid", { detail: { open } }));
+  const openLid = () => { if (!lid.classList.contains("show") || lid.classList.contains("opening")) return; lid.classList.add("opening"); lidEvent(true); setTimeout(() => lid.classList.remove("show", "opening"), 520); };
+  const closeLid = () => { const was = lid.classList.contains("show") && !lid.classList.contains("opening"); lid.classList.remove("opening"); lid.classList.add("show"); if (!was) lidEvent(false); };
+  lid.addEventListener("click", openLid);
+  const params0 = new URLSearchParams(location.search);
+  if (params0.has("cover") || (matchMedia("(pointer: coarse)").matches && Math.min(innerWidth, innerHeight) < 480 && !params0.has("classic"))) closeLid();
+  addEventListener("resize", () => {
+    const a = area(), change = a / lastArea;
+    if (change > 1.5) openLid(); else if (change < 0.66) closeLid();
+    lastArea = a;
+  });
+  navigator.devicePosture?.addEventListener?.("change", () => { if (navigator.devicePosture.type === "folded") closeLid(); else openLid(); });
+  addEventListener("resize", fit);
+  // rotating or unfolding can report the new size late, so also follow the page's real size
+  if (window.ResizeObserver) new ResizeObserver(() => fit()).observe(document.documentElement);
+  screen.orientation?.addEventListener?.("change", () => setTimeout(fit, 150));
+  matchMedia("(pointer: coarse)").addEventListener?.("change", fit);
+  document.fonts?.ready.then(() => { ratios = {}; fit(); });
+  fit();
+
+  /* ---------- state ---------- */
+  function setHeld(btn, on) {
+    if (held[btn] === on) return;
+    held[btn] = on;
+    emit(on ? "down" : "up", btn);
+    if (on && navigator.vibrate) navigator.vibrate(8);
+  }
+  const sources = { pointer: new Map(), keys: new Set() };
+  function recompute() {
+    const want = new Set(sources.keys);
+    for (const set of sources.pointer.values()) set.forEach(b => want.add(b));
+    BUTTONS.forEach(b => setHeld(b, want.has(b)));
+    // visuals
+    document.querySelectorAll("[data-btn]").forEach(el => {
+      const b = el.dataset.btn;
+      if (b !== "DPAD") el.classList.toggle("pressed", held[b]);
+    });
+    const v = held.UP ? "up" : held.DOWN ? "down" : "";
+    const hz = held.LEFT ? "left" : held.RIGHT ? "right" : "";
+    dpadEl.dataset.tilt = v && hz ? v + "-" + hz : (v || hz);
+  }
+
+  /* ---------- touch / mouse on the controls (multi-touch, slide between buttons) ---------- */
+  function buttonsAt(x, y) {
+    const el = document.elementFromPoint(x, y)?.closest("[data-btn]");
+    if (!el) return [];
+    if (el.dataset.btn !== "DPAD") return [el.dataset.btn];
+    const r = el.getBoundingClientRect();
+    const dx = (x - (r.left + r.width / 2)) / (r.width / 2);
+    const dy = (y - (r.top + r.height / 2)) / (r.height / 2);
+    if (Math.hypot(dx, dy) < 0.18) return [];
+    const out = [];
+    const ang = Math.atan2(dy, dx) * 180 / Math.PI; // 0 = right, 90 = down
+    // 8-way with 45 degree sectors centred on each direction
+    if (ang > -67.5 && ang < 67.5) out.push("RIGHT");
+    if (ang > 112.5 || ang < -112.5) out.push("LEFT");
+    if (ang > 22.5 && ang < 157.5) out.push("DOWN");
+    if (ang < -22.5 && ang > -157.5) out.push("UP");
+    return out;
+  }
+  function onPointer(e) {
+    if (e.target.closest("canvas")) return;
+    if (e.type === "pointerdown") { e.preventDefault(); e.target.releasePointerCapture?.(e.pointerId); }
+    if (e.type === "pointermove" && !sources.pointer.has(e.pointerId)) return;
+    sources.pointer.set(e.pointerId, new Set(buttonsAt(e.clientX, e.clientY)));
+    recompute();
+  }
+  function endPointer(e) { if (sources.pointer.delete(e.pointerId)) recompute(); }
+  ds.addEventListener("pointerdown", onPointer);
+  addEventListener("pointermove", onPointer);
+  addEventListener("pointerup", endPointer);
+  addEventListener("pointercancel", endPointer);
+  // stop iOS from scrolling / zooming / long-press menus while playing
+  ds.addEventListener("touchstart", e => e.preventDefault(), { passive: false });
+  ds.addEventListener("touchmove", e => e.preventDefault(), { passive: false });
+  ds.addEventListener("contextmenu", e => e.preventDefault());
+  document.addEventListener("gesturestart", e => e.preventDefault());
+
+  /* ---------- touch screen ---------- */
+  let stylus = null;
+  function screenPos(e) {
+    const r = botCv.getBoundingClientRect();
+    return {
+      x: Math.max(0, Math.min(255, Math.floor((e.clientX - r.left) / r.width * 256))),
+      y: Math.max(0, Math.min(191, Math.floor((e.clientY - r.top) / r.height * 192)))
+    };
+  }
+  botCv.addEventListener("pointerdown", e => { e.preventDefault(); stylus = e.pointerId; botCv.setPointerCapture(e.pointerId); emit("touch", { ...screenPos(e), phase: "start" }); });
+  botCv.addEventListener("pointermove", e => { if (e.pointerId === stylus) emit("touch", { ...screenPos(e), phase: "move" }); });
+  const lift = e => { if (e.pointerId === stylus) { stylus = null; emit("touch", { ...screenPos(e), phase: "end" }); } };
+  botCv.addEventListener("pointerup", lift);
+  botCv.addEventListener("pointercancel", lift);
+
+  /* ---------- keyboard ---------- */
+  const KEYMAP = { ArrowUp: "UP", ArrowDown: "DOWN", ArrowLeft: "LEFT", ArrowRight: "RIGHT",
+    KeyX: "A", KeyZ: "B", KeyS: "X", KeyA: "Y", KeyQ: "L", KeyW: "R",
+    Enter: "START", ShiftLeft: "SELECT", ShiftRight: "SELECT", Backspace: "SELECT" };
+  addEventListener("keydown", e => { const b = KEYMAP[e.code]; if (!b) return; e.preventDefault(); sources.keys.add(b); recompute(); });
+  addEventListener("keyup", e => { const b = KEYMAP[e.code]; if (!b) return; sources.keys.delete(b); recompute(); });
+  addEventListener("blur", () => { sources.keys.clear(); sources.pointer.clear(); recompute(); });
+
+  /* ---------- game loop ---------- */
+  const topCtx = topCv.getContext("2d"), botCtx = botCv.getContext("2d");
+  topCtx.imageSmoothingEnabled = botCtx.imageSmoothingEnabled = false;
+  let game = null, last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (game) { game.update?.(dt); game.draw?.(topCtx, botCtx); }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  window.DS = {
+    buttons: BUTTONS,
+    isDown: b => !!held[b],
+    on(type, fn) { listeners[type].push(fn); return () => { listeners[type] = listeners[type].filter(f => f !== fn); }; },
+    top: topCv, bottom: botCv,
+    setGame(g) { listeners.down = []; listeners.up = []; listeners.touch = []; game = g; g.init?.(); },
+    // haptic([on, off, on, ...]) in ms: navigator.vibrate on Android; on iPhone Safari (iOS 18+) a
+    // hidden switch checkbox gives one light tap per "on" step. Elsewhere it does nothing.
+    haptic(pattern) {
+      if (typeof navigator.vibrate === "function") { try { navigator.vibrate(pattern); return; } catch (e) {} }
+      let at = 0;
+      pattern.forEach((ms, i) => { if (i % 2 === 0) setTimeout(iosTap, at); at += ms; });
+    },
+    lidClosed: () => document.getElementById("lid").classList.contains("show")
+  };
+  let tapSwitch = null;
+  function iosTap() {
+    try {
+      if (!tapSwitch) {
+        tapSwitch = document.createElement("label");
+        tapSwitch.style.cssText = "position:fixed;left:-99px;top:0;opacity:0;pointer-events:none";
+        const box = document.createElement("input"); box.type = "checkbox"; box.setAttribute("switch", "");
+        tapSwitch.appendChild(box); document.body.appendChild(tapSwitch);
+      }
+      tapSwitch.click();
+    } catch (e) {}
+  }
+})();
+</script>
+
+<!-- Your game: game.js calls DS.setGame({...}). Swap it for your own. -->
+<script src="game.js"></script>
+</html>
