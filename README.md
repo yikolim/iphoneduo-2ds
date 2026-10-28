@@ -16,7 +16,8 @@ A pink, dual-screen handheld that runs in the browser, made for the iPhone Duo f
 
 ## What you get
 
-- **Two screens, like a 2DS.** A wide top screen (400×240) and a touch screen (256×192) underneath, with a D-pad, A/B/X/Y, L/R, START and SELECT.
+- **Two screens, like a 2DS.** A wide top screen (400×240) and a touch screen (256×192) underneath.
+- **New 2DS XL-style controls, sized for thumbs.** A circle pad above the D-pad on the left; the A/B/X/Y diamond with START and SELECT under it on the right; L/R on the hinge. The circle pad steers in 8 directions (the same UP/DOWN/LEFT/RIGHT as the D-pad), keeps following your thumb even if it slides off, and springs back when you let go.
 - **Made for the iPhone Duo.** On a foldable or tablet the handheld fills the screen, one half per side of the fold. Everywhere else it sits in an upright Duo-shaped frame. Both halves are raised pink panels on a dark phone body, with the lid casting a shadow onto the lower half.
 - **A closed lid on the outer screen.** On a folded phone (or any small touch screen) you first see the back of a pink lid. Unfold the phone, or tap, and it swings open and your game starts. Fold it again and the game pauses.
 - **Every way to play.** Touch the on-screen buttons, use a keyboard, or tap the bottom screen.
@@ -74,7 +75,7 @@ Paste something like this into your AI assistant, then put what it writes into `
 | Call | What it does |
 | --- | --- |
 | `DS.setGame({ init, update, draw })` | Plugs your game in. `init()` runs once, `update(dt)` every frame with `dt` in seconds, `draw(top, bottom)` every frame with the two 2D contexts. |
-| `DS.isDown(button)` | `true` while a button is held. |
+| `DS.isDown(button)` | `true` while a button is held. The circle pad shows up as UP/DOWN/LEFT/RIGHT too. |
 | `DS.on("down" \| "up", fn)` | `fn(button)` once per press or release. Returns a function that removes the listener. |
 | `DS.on("touch", fn)` | `fn({ x, y, phase })` for the bottom screen. `x`/`y` are in the bottom screen's 256×192 pixels; `phase` is `start`, `move` or `end`. |
 | `DS.buttons` | `["UP","DOWN","LEFT","RIGHT","A","B","X","Y","L","R","START","SELECT"]` |

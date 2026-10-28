@@ -101,7 +101,19 @@ canvas { display: block; width: calc(var(--u)*76); height: calc(var(--u)*57); im
 .ds:not(.wide) .deck .bezel { margin-bottom: calc(var(--u)*4); }
 .ds.wide .deck { grid-template-columns: 1fr auto 1fr; grid-template-areas: "dpad screen face" ". screen sys"; column-gap: calc(var(--u)*4); }
 .deck .bezel { grid-area: screen; }
-.dpad-wrap { grid-area: dpad; }
+.righty { display: contents; }
+.lefty { grid-area: dpad; display: flex; flex-direction: column; align-items: center; gap: calc(var(--u)*2.5); }
+/* 3DS-style circle pad (shown in the Duo layout): drag the knob to walk, like the D-pad. */
+.stick-wrap { display: none; position: relative; }
+.stick { width: 100%; height: 100%; border-radius: 50%; position: relative; touch-action: none;
+  box-shadow: 0 0 0 calc(var(--u)*.5) rgba(255,255,255,.85), 0 0 0 calc(var(--u)*.9) rgba(196,140,146,.45); }
+/* a pink cap, the same pink as the buttons, sitting in the thin ring */
+.knob { position: absolute; left: 50%; top: 50%; width: 84%; height: 84%; margin: -42% 0 0 -42%; border-radius: 50%; transition: transform .08s ease-out;
+  background: radial-gradient(circle at 40% 30%, #fff1f1 0%, #f6d6d6 30%, var(--btn) 62%, #dcaaab 100%);
+  box-shadow: 0 calc(var(--u)*.6) calc(var(--u)*.8) rgba(90,40,48,.32), inset 0 calc(var(--u)*-.5) calc(var(--u)*.6) rgba(150,90,95,.35); }
+.knob::after { content: ""; position: absolute; inset: 22%; border-radius: 50%; background: radial-gradient(circle at 50% 60%, rgba(255,255,255,.35), rgba(220,160,165,.25) 70%);
+  box-shadow: inset 0 calc(var(--u)*.4) calc(var(--u)*.6) rgba(150,90,96,.3); }
+.stick.dragging .knob { transition: none; }
 .face { grid-area: face; }
 /* DS Lite: START above SELECT, small round keys under the face buttons, labels printed to their left */
 .sys { grid-area: sys; display: flex; flex-direction: column; align-items: flex-end; gap: calc(var(--u)*1.6); justify-self: center; align-self: start; padding-left: calc(var(--u)*6); }
@@ -141,7 +153,7 @@ canvas { display: block; width: calc(var(--u)*76); height: calc(var(--u)*57); im
 .face { width: calc(var(--u)*26); height: calc(var(--u)*26); position: relative; }
 .btn {
   position: absolute; width: calc(var(--u)*8.6); height: calc(var(--u)*8.6); border-radius: 50%;
-  background: radial-gradient(circle at 40% 30%, #fff1f1 0%, #f6d6d6 30%, var(--btn) 60%, #dcaaab 100%);
+  background: radial-gradient(circle at 40% 30%, #fff1f1 0%, #f6d6d6 30%, var(--btn) 62%, #dcaaab 100%);
   box-shadow:
     0 0 0 calc(var(--u)*.45) #9c6a6d,                       /* gap between key and shell */
     0 0 0 calc(var(--u)*.85) rgba(255,255,255,.5),            /* shell lip catching light */
@@ -225,11 +237,23 @@ canvas { display: block; width: calc(var(--u)*76); height: calc(var(--u)*57); im
 .ds.duo:not(.duo-row) .glass { background: #121013; border-radius: calc(var(--u)*2); padding: calc(var(--u)*1.6); box-shadow: inset 0 calc(var(--u)*.7) calc(var(--u)*1.2) rgba(0,0,0,.85), inset 0 calc(var(--u)*-.3) 0 rgba(255,255,255,.12); }
 .ds.duo:not(.duo-row) canvas { border-radius: calc(var(--u)*.6); }
 /* Thumb-sized controls: the touch screen gives up a little width so the D-pad and buttons can grow. */
-.ds.duo:not(.duo-row) .dpad-wrap, .ds.duo:not(.duo-row) .face { width: calc(var(--u)*42); height: calc(var(--u)*42); }
-.ds.duo:not(.duo-row) .btn { width: calc(var(--u)*15); height: calc(var(--u)*15); font-size: calc(var(--u)*5); }
-.ds.duo:not(.duo-row) .pill { width: calc(var(--u)*7.5); height: calc(var(--u)*7.5); }
-.ds.duo:not(.duo-row) .small { font-size: calc(var(--u)*2.4); padding: calc(var(--u)*1) 0; }
-.ds.duo:not(.duo-row) .dpad-wrap, .ds.duo:not(.duo-row) .face { filter: drop-shadow(0 calc(var(--u)*1.2) calc(var(--u)*1)  rgba(90,32,42,.45)); }
+.ds.duo:not(.duo-row) .face { width: calc(var(--u)*36); height: calc(var(--u)*36); }
+/* left column: circle pad on top, D-pad under it (as on a 3DS); START and SELECT spaced apart */
+/* Bottom half laid out like the New 2DS XL: the circle pad at the top left with the D-pad low under
+   it; the face buttons and START / SELECT (dot first, italic label after) down the right. */
+.ds.duo:not(.duo-row) .deck { grid-template-areas: "dpad screen face"; grid-template-columns: 1fr auto 1fr; align-items: stretch; }
+.ds.duo:not(.duo-row) .lefty { justify-content: space-between; align-self: stretch; gap: calc(var(--u)*2); }
+.ds.duo:not(.duo-row) .righty { grid-area: face; display: flex; flex-direction: column; align-items: center; justify-content: space-around; gap: calc(var(--u)*2); align-self: stretch; }
+.ds.duo:not(.duo-row) .stick-wrap { display: block; width: calc(var(--u)*22); height: calc(var(--u)*22); margin-top: calc(var(--u)*1); }
+.ds.duo:not(.duo-row) .dpad-wrap { width: calc(var(--u)*28); height: calc(var(--u)*28); }
+.ds.duo:not(.duo-row) .sys { align-self: flex-start; align-items: flex-start; gap: calc(var(--u)*4); padding-left: calc(var(--u)*3); }
+.ds.duo:not(.duo-row) .btn { width: calc(var(--u)*12.5); height: calc(var(--u)*12.5); font-size: calc(var(--u)*4.2); }
+.ds.duo:not(.duo-row) .small { flex-direction: row-reverse; gap: calc(var(--u)*2); font-size: calc(var(--u)*2.4); font-style: italic; padding: calc(var(--u)*.6) 0; }
+.ds.duo:not(.duo-row) .pill { width: calc(var(--u)*6); height: calc(var(--u)*6); background: radial-gradient(circle at 40% 30%, #fff1f1 0%, #f6d6d6 30%, var(--btn) 62%, #dcaaab 100%); }
+/* breathing room: space to the left of Y, and above START */
+.ds.duo:not(.duo-row) .face { margin-left: calc(var(--u)*4); }
+.ds.duo:not(.duo-row) .sys { margin-top: calc(var(--u)*4); }
+.ds.duo:not(.duo-row) .stick-wrap, .ds.duo:not(.duo-row) .dpad-wrap, .ds.duo:not(.duo-row) .face { filter: drop-shadow(0 calc(var(--u)*1.2) calc(var(--u)*1)  rgba(90,32,42,.45)); }
 /* ---------- closed lid: what the folded phone's small outer screen shows ----------
    The back of a pink 3DS XL lid: plain glossy pink, a white hinge bar across the top with a small
    light at its end. Unfolding the phone (or tapping) opens it. */
@@ -280,11 +304,15 @@ canvas { display: block; width: calc(var(--u)*76); height: calc(var(--u)*57); im
       <div class="mic">MIC</div>
       <div class="deck">
         <div class="bezel"><div class="glass"><canvas id="bottom" width="256" height="192"></canvas></div></div>
+        <div class="lefty">
+        <div class="stick-wrap"><div class="stick" id="stick" data-btn="STICK" aria-label="Circle pad"><div class="knob" id="knob"></div></div></div>
         <div class="dpad-wrap">
           <div class="dpad" id="dpad" data-btn="DPAD" role="group" aria-label="D-pad">
             <span class="arrow up"></span><span class="arrow down"></span><span class="arrow left"></span><span class="arrow right"></span><span class="dot"></span>
           </div>
         </div>
+        </div>
+        <div class="righty">
         <div class="face" role="group" aria-label="Face buttons">
           <div class="btn" data-btn="X">X</div>
           <div class="btn" data-btn="Y">Y</div>
@@ -294,6 +322,7 @@ canvas { display: block; width: calc(var(--u)*76); height: calc(var(--u)*57); im
         <div class="sys">
           <div class="small" data-btn="START">START<span class="pill"></span></div>
           <div class="small" data-btn="SELECT">SELECT<span class="pill"></span></div>
+        </div>
         </div>
       </div>
       </div>
@@ -312,6 +341,7 @@ canvas { display: block; width: calc(var(--u)*76); height: calc(var(--u)*57); im
    iPhone Duo 2DS input layer
    window.DS is the hook a game plugs into (see README.md):
      DS.isDown("A")              -> boolean, buttons: UP DOWN LEFT RIGHT A B X Y L R START SELECT
+                                    (the circle pad drives UP/DOWN/LEFT/RIGHT, same as the D-pad)
      DS.on("down", fn(btn))      -> fires once per press
      DS.on("up",   fn(btn))
      DS.on("touch", fn({x,y,phase}))  -> bottom screen, x/y in 256x192 pixels, phase start|move|end
@@ -476,14 +506,36 @@ canvas { display: block; width: calc(var(--u)*76); height: calc(var(--u)*57); im
     if (ang < -22.5 && ang > -157.5) out.push("UP");
     return out;
   }
+  // Circle pad: the finger that lands on it steers it until it lifts, wherever it slides.
+  const stickEl = document.getElementById("stick"), knobEl = document.getElementById("knob");
+  let stickPointer = null;
+  function stickDirs(x, y) {
+    const r = stickEl.getBoundingClientRect(), R = r.width / 2;
+    let dx = (x - (r.left + R)) / R, dy = (y - (r.top + R)) / R;
+    const d = Math.hypot(dx, dy);
+    if (d > 1) { dx /= d; dy /= d; }
+    knobEl.style.transform = `translate(${dx * 14}%, ${dy * 14}%)`;   // stays inside the thin ring
+    if (d < 0.3) return [];
+    const out = [], ang = Math.atan2(dy, dx) * 180 / Math.PI;
+    if (ang > -67.5 && ang < 67.5) out.push("RIGHT");
+    if (ang > 112.5 || ang < -112.5) out.push("LEFT");
+    if (ang > 22.5 && ang < 157.5) out.push("DOWN");
+    if (ang < -22.5 && ang > -157.5) out.push("UP");
+    return out;
+  }
   function onPointer(e) {
+    if (e.type === "pointerdown" && e.target.closest("#stick")) { e.preventDefault(); stickPointer = e.pointerId; stickEl.classList.add("dragging"); }
+    if (e.pointerId === stickPointer) { sources.pointer.set(e.pointerId, new Set(stickDirs(e.clientX, e.clientY))); recompute(); return; }
     if (e.target.closest("canvas")) return;
     if (e.type === "pointerdown") { e.preventDefault(); e.target.releasePointerCapture?.(e.pointerId); }
     if (e.type === "pointermove" && !sources.pointer.has(e.pointerId)) return;
     sources.pointer.set(e.pointerId, new Set(buttonsAt(e.clientX, e.clientY)));
     recompute();
   }
-  function endPointer(e) { if (sources.pointer.delete(e.pointerId)) recompute(); }
+  function endPointer(e) {
+    if (e.pointerId === stickPointer) { stickPointer = null; stickEl.classList.remove("dragging"); knobEl.style.transform = ""; }
+    if (sources.pointer.delete(e.pointerId)) recompute();
+  }
   ds.addEventListener("pointerdown", onPointer);
   addEventListener("pointermove", onPointer);
   addEventListener("pointerup", endPointer);
