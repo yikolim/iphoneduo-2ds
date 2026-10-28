@@ -5,9 +5,9 @@ A pink, dual-screen handheld that runs in the browser, made for the iPhone Duo f
 **Try the demo:** https://yikolim.github.io/iphoneduo-2ds/
 
 <p>
-  <img src="screenshots/demo-title.jpg" width="240" alt="The demo's title screen on the handheld">
-  <img src="screenshots/demo-garden.jpg" width="240" alt="The demo garden, with the button readout on the top screen">
-  <img src="screenshots/closed-lid.jpg" width="240" alt="The closed pink lid shown on a folded phone">
+  <img src="screenshots/demo-title-2.jpg" width="240" alt="The demo's title screen on the handheld">
+  <img src="screenshots/demo-garden-2.jpg" width="240" alt="The demo garden, with the button readout on the top screen">
+  <img src="screenshots/closed-lid-2.jpg" width="240" alt="The closed pink lid shown on a folded phone">
 </p>
 
 <sub>The demo game, and the closed lid that a folded phone shows before you open it.</sub>
@@ -119,7 +119,7 @@ Then open the address it prints.
 
 **[Butterland](https://yikolim.github.io/butterland/)**, a cozy pixel game, runs on this handheld.
 
-<img src="screenshots/butterland.jpg" width="240" alt="Butterland's title screen on the handheld">
+<img src="screenshots/butterland-2.jpg" width="240" alt="Butterland's title screen on the handheld">
 
 Made something? Open an issue or pull request to add it here.
 
