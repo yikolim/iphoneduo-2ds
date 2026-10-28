@@ -33,6 +33,26 @@ A pink, dual-screen handheld that runs in the browser, made for the iPhone Duo f
 | `icon.svg` | The browser tab icon. |
 | `LICENSE` | MIT. |
 
+## Download and try it
+
+You don't need to install anything.
+
+1. On this page, click the green **Code** button, then **Download ZIP**.
+2. Unzip it.
+3. Double-click `index.html` in the unzipped folder. It opens in your browser and the demo starts.
+
+Or with git:
+
+```bash
+git clone https://github.com/yikolim/iphoneduo-2ds.git
+```
+
+```bash
+open iphoneduo-2ds/index.html
+```
+
+(On Windows use `start`, on Linux `xdg-open`.) To try it on your phone, use the [live demo](https://yikolim.github.io/iphoneduo-2ds/) or host your copy on GitHub Pages (below).
+
 ## Put your own game in
 
 1. Replace `game.js` with your game. The only rule: it calls `DS.setGame({...})` once.
@@ -119,7 +139,10 @@ Then open the address it prints.
 
 **[Butterland](https://yikolim.github.io/butterland/)**, a cozy pixel game, runs on this handheld.
 
-<img src="screenshots/butterland-2.jpg" width="240" alt="Butterland's title screen on the handheld">
+<p>
+  <img src="screenshots/butterland-2.jpg" width="240" alt="Butterland's title screen on the handheld">
+  <img src="screenshots/butterland-yard.jpg" width="240" alt="Butterland in play: Claire in her front yard, with the quest on the touch screen">
+</p>
 
 Made something? Open an issue or pull request to add it here.
 
