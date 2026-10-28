@@ -195,25 +195,25 @@ canvas { display: block; width: calc(var(--u)*76); height: calc(var(--u)*57); im
 .ds.duo ~ .hint { display: none; }
 /* Clamshell in the Duo frame: each half scales on its own, so the top screen fills its half and
    the touch screen (4:3) is as big as the row with the controls tucked in close allows. */
-.ds.duo:not(.duo-row) canvas#bottom { width: calc(var(--u)*85.33); height: calc(var(--u)*64); }
+.ds.duo:not(.duo-row) canvas#bottom { width: calc(var(--u)*77.33); height: calc(var(--u)*58); }
 .ds.duo:not(.duo-row) .deck { column-gap: calc(var(--u)*2.5); }
-.ds.duo:not(.duo-row) .bottom { padding-left: calc(var(--u)*3); padding-right: calc(var(--u)*3); }
+.ds.duo:not(.duo-row) .bottom { padding-left: calc(var(--u)*2); padding-right: calc(var(--u)*2); }
 .ds.duo:not(.duo-row) .sys { padding-left: calc(var(--u)*2); }
 .ds.duo:not(.duo-row) .top .bezel { padding: calc(var(--u)*1.2); }
 .ds.duo:not(.duo-row) .top .glass { padding: calc(var(--u)*.7); }
-/* Duo depth, after the pink TinyMac-style foldables: the phone's dark body shows as a thin rim, and
-   each half is a raised pink panel with rounded corners, lit from above. The lid casts a shadow onto
+/* Duo depth, after the pink TinyMac-style foldables: each half is a raised pink panel reaching the
+   screen edges (so the status bar sits on pink), lit from above, with the dark body showing at the fold. The lid casts a shadow onto
    the deck below the fold, the top screen sits in a thick black frame, and the controls stand up
    off the deck like keycaps. */
 .ds.duo:not(.duo-row) { background: linear-gradient(180deg, #2b2428, #1b1619); }
 .ds.duo:not(.duo-row) .shell { position: relative; isolation: isolate; }
 .ds.duo:not(.duo-row) .top {
-  margin: calc(var(--u)*1.6) calc(var(--u)*1.6) calc(var(--u)*1.2); border-radius: calc(var(--u)*7) calc(var(--u)*7) calc(var(--u)*4) calc(var(--u)*4); z-index: 2;
+  margin: 0 0 calc(var(--u)*1.2); border-radius: 0 0 calc(var(--u)*4) calc(var(--u)*4); z-index: 2;
   background: linear-gradient(180deg, #fbe2e1 0%, var(--shell) 30%, #eab8ba 85%, #dda5a9 100%);
   box-shadow: inset 0 calc(var(--u)*.7) 0 rgba(255,255,255,.75), inset 0 calc(var(--u)*-1) 0 #c98f94, inset calc(var(--u)*.6) 0 0 rgba(255,255,255,.35), inset calc(var(--u)*-.6) 0 0 rgba(170,100,108,.35),
     0 calc(var(--u)*2.2) calc(var(--u)*2.6) rgba(10,4,8,.6), 0 calc(var(--u)*.6) calc(var(--u)*.6) rgba(10,4,8,.45); }
 .ds.duo:not(.duo-row) .bottom {
-  margin: calc(var(--u)*1.2) calc(var(--u)*1.6) calc(var(--u)*1.6); border-radius: calc(var(--u)*4) calc(var(--u)*4) calc(var(--u)*7) calc(var(--u)*7);
+  margin: calc(var(--u)*1.2) 0 0; border-radius: calc(var(--u)*4) calc(var(--u)*4) 0 0;
   background: linear-gradient(180deg, #cf979c 0%, #e7b3b6 9%, var(--shell) 22%, var(--shell) 80%, #f6d3d3 100%);
   box-shadow: inset 0 calc(var(--u)*3.5) calc(var(--u)*3.5) rgba(95,38,48,.38), inset 0 calc(var(--u)*-.7) 0 rgba(255,255,255,.55), inset calc(var(--u)*.6) 0 0 rgba(255,255,255,.3), inset calc(var(--u)*-.6) 0 0 rgba(170,100,108,.3),
     0 calc(var(--u)*1.2) calc(var(--u)*1.6) rgba(10,4,8,.5); }
@@ -224,21 +224,26 @@ canvas { display: block; width: calc(var(--u)*76); height: calc(var(--u)*57); im
 .ds.duo:not(.duo-row) .bezel { background: linear-gradient(180deg, #e0a9ad, #f1c8c9); box-shadow: inset 0 calc(var(--u)*1) calc(var(--u)*1.4) rgba(100,40,50,.5), 0 calc(var(--u)*.45) 0 rgba(255,255,255,.7), 0 calc(var(--u)*-.35) calc(var(--u)*.5) rgba(120,55,62,.3); }
 .ds.duo:not(.duo-row) .glass { background: #121013; border-radius: calc(var(--u)*2); padding: calc(var(--u)*1.6); box-shadow: inset 0 calc(var(--u)*.7) calc(var(--u)*1.2) rgba(0,0,0,.85), inset 0 calc(var(--u)*-.3) 0 rgba(255,255,255,.12); }
 .ds.duo:not(.duo-row) canvas { border-radius: calc(var(--u)*.6); }
+/* Thumb-sized controls: the touch screen gives up a little width so the D-pad and buttons can grow. */
+.ds.duo:not(.duo-row) .dpad-wrap, .ds.duo:not(.duo-row) .face { width: calc(var(--u)*42); height: calc(var(--u)*42); }
+.ds.duo:not(.duo-row) .btn { width: calc(var(--u)*15); height: calc(var(--u)*15); font-size: calc(var(--u)*5); }
+.ds.duo:not(.duo-row) .pill { width: calc(var(--u)*7.5); height: calc(var(--u)*7.5); }
+.ds.duo:not(.duo-row) .small { font-size: calc(var(--u)*2.4); padding: calc(var(--u)*1) 0; }
 .ds.duo:not(.duo-row) .dpad-wrap, .ds.duo:not(.duo-row) .face { filter: drop-shadow(0 calc(var(--u)*1.2) calc(var(--u)*1)  rgba(90,32,42,.45)); }
 /* ---------- closed lid: what the folded phone's small outer screen shows ----------
    The back of a pink 3DS XL lid: plain glossy pink, a white hinge bar across the top with a small
    light at its end. Unfolding the phone (or tapping) opens it. */
 .lid { position: fixed; inset: 0; z-index: 60; display: none; background: linear-gradient(180deg, #2b2428, #1b1619); perspective: 900px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .lid.show { display: block; }
-.lid-face { position: absolute; inset: max(10px, env(safe-area-inset-top, 0px)) max(10px, env(safe-area-inset-right, 0px)) max(10px, env(safe-area-inset-bottom, 0px)) max(10px, env(safe-area-inset-left, 0px));
-  border-radius: 18px 18px 30px 30px; transform-origin: 50% 0%; transition: transform .5s cubic-bezier(.5,0,.7,.4), opacity .5s; overflow: hidden;
+.lid-face { position: absolute; inset: 0;
+  border-radius: 0; transform-origin: 50% 0%; transition: transform .5s cubic-bezier(.5,0,.7,.4), opacity .5s; overflow: hidden;
   background:
     linear-gradient(115deg, rgba(255,255,255,.55) 0%, rgba(255,255,255,.18) 22%, transparent 38%),
     radial-gradient(140% 70% at 50% 110%, rgba(170,95,105,.28), transparent 60%),
     linear-gradient(180deg, #f6d2d5 0%, #f1c3c8 40%, #ebb6bd 85%, #e3a9b1 100%);
   box-shadow: inset 0 -4px 0 rgba(200,140,148,.8), inset 3px 0 0 rgba(255,255,255,.35), inset -3px 0 0 rgba(190,120,130,.35), 0 10px 22px rgba(0,0,0,.55); }
 .lid.opening .lid-face { transform: rotateX(88deg); opacity: 0; }
-.lid-hinge { position: absolute; left: 0; right: 0; top: 0; height: clamp(26px, 9vmin, 46px); border-radius: 18px 18px 6px 6px;
+.lid-hinge { position: absolute; left: 0; right: 0; top: 0; height: clamp(26px, 9vmin, 46px); border-radius: 0 0 6px 6px;
   background: linear-gradient(180deg, #ffffff 0%, #f4f2f2 45%, #dcd8d9 100%); box-shadow: 0 2px 4px rgba(120,70,80,.35), inset 0 -2px 0 rgba(160,150,152,.6); }
 .lid-hinge::before, .lid-hinge::after { content: ""; position: absolute; top: 12%; bottom: 12%; width: 7%; border-radius: 40%; background: linear-gradient(180deg, #fafafa, #e2dfe0); box-shadow: inset 0 0 0 1px rgba(150,140,142,.35); }
 .lid-hinge::before { left: 2%; }
