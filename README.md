@@ -4,6 +4,14 @@ A pink, dual-screen handheld that runs in the browser, made for the iPhone Duo f
 
 **Try the demo:** https://yikolim.github.io/iphoneduo-2ds/
 
+<p>
+  <img src="screenshots/demo-title.jpg" width="240" alt="The demo's title screen on the handheld">
+  <img src="screenshots/demo-garden.jpg" width="240" alt="The demo garden, with the button readout on the top screen">
+  <img src="screenshots/closed-lid.jpg" width="240" alt="The closed pink lid shown on a folded phone">
+</p>
+
+<sub>The demo game, and the closed lid that a folded phone shows before you open it.</sub>
+
 ## What you get
 
 - **Two screens, like a 2DS.** A wide top screen (400×240) and a touch screen (256×192) underneath, with a D-pad, A/B/X/Y, L/R, START and SELECT.
@@ -103,6 +111,14 @@ Then open the address it prints.
 1. Push this folder to a GitHub repository.
 2. In the repository's **Settings → Pages**, set the source to your main branch and the root folder.
 3. Your handheld is live at `https://<your-name>.github.io/<repo-name>/`.
+
+## Made with it
+
+**[Butterland](https://yikolim.github.io/butterland/)**, a cozy pixel game, runs on this handheld.
+
+<img src="screenshots/butterland.jpg" width="240" alt="Butterland's title screen on the handheld">
+
+Made something? Open an issue or pull request to add it here.
 
 ## License
 
