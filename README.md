@@ -12,6 +12,8 @@ A pink, dual-screen handheld that runs in the browser, made for the iPhone Duo f
 
 <sub>The demo game, and the closed lid that a folded phone shows before you open it.</sub>
 
+> **A note on proportions:** this handheld is inspired by the Nintendo 2DS / 3DS family, not a copy of it. The original screen and shell ratios have been tweaked to make the best use of modern phone, foldable and computer screens: the top screen is a wide 5:3 (400×240), the two halves are resized to fit the frame, and the buttons are made larger for thumbs. It is a fan-made tribute and is not affiliated with or endorsed by Nintendo.
+
 ## What you get
 
 - **Two screens, like a 2DS.** A wide top screen (400×240) and a touch screen (256×192) underneath, with a D-pad, A/B/X/Y, L/R, START and SELECT.
